@@ -17,7 +17,9 @@
     "start": "bindings=$(./bindings.sh) && wrangler pages dev ./build/client $bindings",
     "typecheck": "tsc",
     "typegen": "wrangler types",
-    "preview": "pnpm run build && pnpm run start"
+    "preview": "pnpm run build && pnpm run start",
+    "deploy:gcloud": "gcloud app deploy",
+    "deploy:aws": "aws s3 sync ./build s3://your-bucket-name"
   },
   "engines": {
     "node": ">=18.18.0"
@@ -74,7 +76,16 @@
     "remix-island": "^0.2.0",
     "remix-utils": "^7.6.0",
     "shiki": "^1.9.1",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "@google-cloud/storage": "^6.9.0",
+    "aws-sdk": "^2.1234.0",
+    "@google-cloud/functions-framework": "^1.9.0",
+    "aws-lambda": "^1.0.7",
+    "@google-cloud/pubsub": "^2.20.0",
+    "aws-sdk/clients/sns": "^2.1234.0",
+    "aws-sdk/clients/sqs": "^2.1234.0",
+    "@google-cloud/firestore": "^6.5.0",
+    "aws-sdk/clients/dynamodb": "^2.1234.0"
   },
   "devDependencies": {
     "@blitz/eslint-plugin": "0.1.0",
