@@ -3,3 +3,11 @@ name = "bolt"
 compatibility_flags = ["nodejs_compat"]
 compatibility_date = "2024-07-01"
 pages_build_output_dir = "./build/client"
+
+[google_cloud]
+project_id = "your-google-cloud-project-id"
+credentials_file = "path/to/your/google-cloud-credentials.json"
+
+[aws]
+region = "your-aws-region"
+credentials_file = "path/to/your/aws-credentials.json"
