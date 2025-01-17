@@ -57,3 +57,61 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
     });
   }
 }
+
+// Tests for api.chat.ts
+
+import { describe, it, expect } from 'vitest';
+import { createRequest, createContext } from 'remix-mock';
+import { action } from './api.chat';
+
+describe('api.chat', () => {
+  it('should handle maximum token limits', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: 'Test message' },
+        ],
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('Continuing message');
+  });
+
+  it('should handle multiple response segments', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: 'Test message' },
+        ],
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('Continuing message');
+  });
+});

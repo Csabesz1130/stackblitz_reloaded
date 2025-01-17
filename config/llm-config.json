@@ -1,0 +1,19 @@
+{
+  "llms": [
+    {
+      "name": "Anthropic",
+      "apiKey": "your-anthropic-api-key",
+      "endpoint": "https://api.anthropic.com"
+    },
+    {
+      "name": "OpenAI",
+      "apiKey": "your-openai-api-key",
+      "endpoint": "https://api.openai.com"
+    },
+    {
+      "name": "Google",
+      "apiKey": "your-google-api-key",
+      "endpoint": "https://api.google.com"
+    }
+  ]
+}
