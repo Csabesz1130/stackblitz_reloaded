@@ -58,3 +58,81 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
     });
   }
 }
+
+// Tests for api.enhancer.ts
+
+import { describe, it, expect } from 'vitest';
+import { createRequest, createContext } from 'remix-mock';
+import { action } from './api.enhancer';
+
+describe('api.enhancer', () => {
+  it('should handle valid prompt enhancement', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        message: 'Test message',
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('improved prompt');
+  });
+
+  it('should handle empty message', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        message: '',
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('improved prompt');
+  });
+
+  it('should handle error conditions', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        message: 'Test message',
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'invalid-api-key',
+        },
+      },
+    });
+
+    try {
+      await action({ request, context });
+    } catch (error) {
+      expect(error).toBeInstanceOf(Response);
+      expect(error.status).toBe(500);
+    }
+  });
+});
