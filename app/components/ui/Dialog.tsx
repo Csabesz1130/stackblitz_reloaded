@@ -1,11 +1,9 @@
-import * as RadixDialog from '@radix-ui/react-dialog';
+import { Dialog as ShadcnDialog, DialogContent, DialogDescription as ShadcnDialogDescription, DialogTitle as ShadcnDialogTitle, DialogTrigger, DialogClose } from 'shadcn/ui/dialog';
 import { motion, type Variants } from 'framer-motion';
 import React, { memo, type ReactNode } from 'react';
 import { classNames } from '~/utils/classNames';
 import { cubicEasingFn } from '~/utils/easings';
 import { IconButton } from './IconButton';
-
-export { Close as DialogClose, Root as DialogRoot } from '@radix-ui/react-dialog';
 
 const transition = {
   duration: 0.15,
@@ -67,9 +65,9 @@ export const DialogButton = memo(({ type, children, onClick }: DialogButtonProps
   );
 });
 
-export const DialogTitle = memo(({ className, children, ...props }: RadixDialog.DialogTitleProps) => {
+export const DialogTitle = memo(({ className, children, ...props }: ShadcnDialogTitleProps) => {
   return (
-    <RadixDialog.Title
+    <ShadcnDialogTitle
       className={classNames(
         'px-5 py-4 flex items-center justify-between border-b border-bolt-elements-borderColor text-lg font-semibold leading-6 text-bolt-elements-textPrimary',
         className,
@@ -77,18 +75,18 @@ export const DialogTitle = memo(({ className, children, ...props }: RadixDialog.
       {...props}
     >
       {children}
-    </RadixDialog.Title>
+    </ShadcnDialogTitle>
   );
 });
 
-export const DialogDescription = memo(({ className, children, ...props }: RadixDialog.DialogDescriptionProps) => {
+export const DialogDescription = memo(({ className, children, ...props }: ShadcnDialogDescriptionProps) => {
   return (
-    <RadixDialog.Description
+    <ShadcnDialogDescription
       className={classNames('px-5 py-4 text-bolt-elements-textPrimary text-md', className)}
       {...props}
     >
       {children}
-    </RadixDialog.Description>
+    </ShadcnDialogDescription>
   );
 });
 
@@ -101,17 +99,11 @@ interface DialogProps {
 
 export const Dialog = memo(({ className, children, onBackdrop, onClose }: DialogProps) => {
   return (
-    <RadixDialog.Portal>
-      <RadixDialog.Overlay onClick={onBackdrop} asChild>
-        <motion.div
-          className="bg-black/50 fixed inset-0 z-max"
-          initial="closed"
-          animate="open"
-          exit="closed"
-          variants={dialogBackdropVariants}
-        />
-      </RadixDialog.Overlay>
-      <RadixDialog.Content asChild>
+    <ShadcnDialog>
+      <DialogTrigger asChild>
+        <button>Open Dialog</button>
+      </DialogTrigger>
+      <DialogContent>
         <motion.div
           className={classNames(
             'fixed top-[50%] left-[50%] z-max max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] border border-bolt-elements-borderColor rounded-lg bg-bolt-elements-background-depth-2 shadow-lg focus:outline-none overflow-hidden',
@@ -123,11 +115,11 @@ export const Dialog = memo(({ className, children, onBackdrop, onClose }: Dialog
           variants={dialogVariants}
         >
           {children}
-          <RadixDialog.Close asChild onClick={onClose}>
+          <DialogClose asChild onClick={onClose}>
             <IconButton icon="i-ph:x" className="absolute top-[10px] right-[10px]" />
-          </RadixDialog.Close>
+          </DialogClose>
         </motion.div>
-      </RadixDialog.Content>
-    </RadixDialog.Portal>
+      </DialogContent>
+    </ShadcnDialog>
   );
 });

@@ -2,6 +2,7 @@ import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { Terminal as XTerm } from '@xterm/xterm';
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from 'react';
+import { Card } from 'shadcn/ui/card';
 import type { Theme } from '~/lib/stores/theme';
 import { createScopedLogger } from '~/utils/logger';
 import { getTerminalTheme } from './theme';
@@ -81,6 +82,10 @@ export const Terminal = memo(
       };
     }, []);
 
-    return <div className={className} ref={terminalElementRef} />;
+    return (
+      <Card className={className}>
+        <div ref={terminalElementRef} />
+      </Card>
+    );
   }),
 );

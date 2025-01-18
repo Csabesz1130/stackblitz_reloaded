@@ -1,3 +1,4 @@
+import { Button } from 'shadcn/ui/button';
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { classNames } from '~/utils/classNames';
@@ -43,7 +44,7 @@ interface SliderButtonProps {
 
 const SliderButton = memo(({ selected, children, setSelected }: SliderButtonProps) => {
   return (
-    <button
+    <Button
       onClick={setSelected}
       className={classNames(
         'bg-transparent text-sm px-2.5 py-0.5 rounded-full relative',
@@ -60,6 +61,6 @@ const SliderButton = memo(({ selected, children, setSelected }: SliderButtonProp
           className="absolute inset-0 z-0 bg-bolt-elements-item-backgroundAccent rounded-full"
         ></motion.span>
       )}
-    </button>
+    </Button>
   );
 });

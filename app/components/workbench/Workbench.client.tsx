@@ -7,9 +7,10 @@ import {
   type OnChangeCallback as OnEditorChange,
   type OnScrollCallback as OnEditorScroll,
 } from '~/components/editor/codemirror/CodeMirrorEditor';
-import { IconButton } from '~/components/ui/IconButton';
-import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
-import { Slider, type SliderOptions } from '~/components/ui/Slider';
+import { Button } from 'shadcn/ui/button';
+import { Icon } from 'shadcn/ui/icon';
+import { Card } from 'shadcn/ui/card';
+import { Slider, type SliderOptions } from 'shadcn/ui/slider';
 import { workbenchStore, type WorkbenchViewType } from '~/lib/stores/workbench';
 import { classNames } from '~/utils/classNames';
 import { cubicEasingFn } from '~/utils/easings';
@@ -122,24 +123,25 @@ export const Workbench = memo(({ chatStarted, isStreaming }: WorkspaceProps) => 
                 <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
                 <div className="ml-auto" />
                 {selectedView === 'code' && (
-                  <PanelHeaderButton
+                  <Button
                     className="mr-1 text-sm"
                     onClick={() => {
                       workbenchStore.toggleTerminal(!workbenchStore.showTerminal.get());
                     }}
                   >
-                    <div className="i-ph:terminal" />
+                    <Icon name="terminal" />
                     Toggle Terminal
-                  </PanelHeaderButton>
+                  </Button>
                 )}
-                <IconButton
-                  icon="i-ph:x-circle"
+                <Button
                   className="-mr-1"
                   size="xl"
                   onClick={() => {
                     workbenchStore.showWorkbench.set(false);
                   }}
-                />
+                >
+                  <Icon name="x-circle" />
+                </Button>
               </div>
               <div className="relative flex-1 overflow-hidden">
                 <View

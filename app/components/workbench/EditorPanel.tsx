@@ -9,7 +9,7 @@ import {
   type OnSaveCallback as OnEditorSave,
   type OnScrollCallback as OnEditorScroll,
 } from '~/components/editor/codemirror/CodeMirrorEditor';
-import { IconButton } from '~/components/ui/IconButton';
+import { Button } from 'shadcn/ui/button';
 import { PanelHeader } from '~/components/ui/PanelHeader';
 import { PanelHeaderButton } from '~/components/ui/PanelHeaderButton';
 import { shortcutEventEmitter } from '~/lib/hooks';
@@ -203,7 +203,7 @@ export const EditorPanel = memo(
                   const isActive = activeTerminal === index;
 
                   return (
-                    <button
+                    <Button
                       key={index}
                       className={classNames(
                         'flex items-center text-sm cursor-pointer gap-1.5 px-3 py-2 h-full whitespace-nowrap rounded-full',
@@ -217,13 +217,12 @@ export const EditorPanel = memo(
                     >
                       <div className="i-ph:terminal-window-duotone text-lg" />
                       Terminal {terminalCount > 1 && index + 1}
-                    </button>
+                    </Button>
                   );
                 })}
-                {terminalCount < MAX_TERMINALS && <IconButton icon="i-ph:plus" size="md" onClick={addTerminal} />}
-                <IconButton
-                  className="ml-auto"
-                  icon="i-ph:caret-down"
+                {terminalCount < MAX_TERMINALS && <Button className="i-ph:plus" size="md" onClick={addTerminal} />}
+                <Button
+                  className="ml-auto i-ph:caret-down"
                   title="Close"
                   size="md"
                   onClick={() => workbenchStore.toggleTerminal(false)}
