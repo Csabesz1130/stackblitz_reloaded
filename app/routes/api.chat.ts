@@ -3,6 +3,8 @@ import { MAX_RESPONSE_SEGMENTS, MAX_TOKENS } from '~/lib/.server/llm/constants';
 import { CONTINUE_PROMPT } from '~/lib/.server/llm/prompts';
 import { streamText, type Messages, type StreamingOptions } from '~/lib/.server/llm/stream-text';
 import SwitchableStream from '~/lib/.server/llm/switchable-stream';
+import { getAPIKey } from '~/lib/.server/llm/api-key';
+import { getAnthropicModel, getGoogleCloudModel, getAWSModel } from '~/lib/.server/llm/model';
 
 export async function action(args: ActionFunctionArgs) {
   return chatAction(args);
@@ -38,7 +40,20 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
       },
     };
 
-    const result = await streamText(messages, context.cloudflare.env, options);
+    const apiKey = getAPIKey(context.cloudflare.env, context.googleCloud, context.aws);
+    let model;
+
+    if (apiKey === context.cloudflare.env.ANTHROPIC_API_KEY) {
+      model = getAnthropicModel(apiKey);
+    } else if (apiKey === context.googleCloud?.GOOGLE_CLOUD_API_KEY) {
+      model = getGoogleCloudModel(apiKey);
+    } else if (apiKey === context.aws?.AWS_API_KEY) {
+      model = getAWSModel(apiKey);
+    } else {
+      throw new Error('Invalid API key');
+    }
+
+    const result = await streamText(messages, context.cloudflare.env, { ...options, model });
 
     stream.switchSource(result.toAIStream());
 
@@ -105,6 +120,37 @@ describe('api.chat', () => {
         env: {
           ANTHROPIC_API_KEY: 'test-api-key',
         },
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('Continuing message');
+  });
+
+  it('should handle different models based on API key', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        messages: [
+          { role: 'user', content: 'Test message' },
+        ],
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+      googleCloud: {
+        GOOGLE_CLOUD_API_KEY: 'google-cloud-api-key',
+      },
+      aws: {
+        AWS_API_KEY: 'aws-api-key',
       },
     });
 

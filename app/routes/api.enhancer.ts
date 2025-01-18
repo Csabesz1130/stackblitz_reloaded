@@ -2,6 +2,8 @@ import { type ActionFunctionArgs } from '@remix-run/cloudflare';
 import { StreamingTextResponse, parseStreamPart } from 'ai';
 import { streamText } from '~/lib/.server/llm/stream-text';
 import { stripIndents } from '~/utils/stripIndent';
+import { getAPIKey } from '~/lib/.server/llm/api-key';
+import { getAnthropicModel, getGoogleCloudModel, getAWSModel } from '~/lib/.server/llm/model';
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -14,6 +16,19 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
   const { message } = await request.json<{ message: string }>();
 
   try {
+    const apiKey = getAPIKey(context.cloudflare.env, context.googleCloud, context.aws);
+    let model;
+
+    if (apiKey === context.cloudflare.env.ANTHROPIC_API_KEY) {
+      model = getAnthropicModel(apiKey);
+    } else if (apiKey === context.googleCloud?.GOOGLE_CLOUD_API_KEY) {
+      model = getGoogleCloudModel(apiKey);
+    } else if (apiKey === context.aws?.AWS_API_KEY) {
+      model = getAWSModel(apiKey);
+    } else {
+      throw new Error('Invalid API key');
+    }
+
     const result = await streamText(
       [
         {
@@ -30,6 +45,7 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
         },
       ],
       context.cloudflare.env,
+      { model }
     );
 
     const transformStream = new TransformStream({
@@ -134,5 +150,34 @@ describe('api.enhancer', () => {
       expect(error).toBeInstanceOf(Response);
       expect(error.status).toBe(500);
     }
+  });
+
+  it('should handle different models based on API key', async () => {
+    const request = createRequest({
+      method: 'POST',
+      body: JSON.stringify({
+        message: 'Test message',
+      }),
+    });
+
+    const context = createContext({
+      cloudflare: {
+        env: {
+          ANTHROPIC_API_KEY: 'test-api-key',
+        },
+      },
+      googleCloud: {
+        GOOGLE_CLOUD_API_KEY: 'google-cloud-api-key',
+      },
+      aws: {
+        AWS_API_KEY: 'aws-api-key',
+      },
+    });
+
+    const response = await action({ request, context });
+
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('improved prompt');
   });
 });

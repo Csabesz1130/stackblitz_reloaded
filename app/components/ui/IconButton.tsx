@@ -1,3 +1,4 @@
+import { Button } from 'shadcn/ui/button';
 import { memo } from 'react';
 import { classNames } from '~/utils/classNames';
 
@@ -38,7 +39,7 @@ export const IconButton = memo(
     children,
   }: IconButtonProps) => {
     return (
-      <button
+      <Button
         className={classNames(
           'flex items-center text-bolt-elements-item-contentDefault bg-transparent enabled:hover:text-bolt-elements-item-contentActive rounded-md p-1 enabled:hover:bg-bolt-elements-item-backgroundActive disabled:cursor-not-allowed',
           {
@@ -57,7 +58,7 @@ export const IconButton = memo(
         }}
       >
         {children ? children : <div className={classNames(icon, getIconSize(size), iconClassName)}></div>}
-      </button>
+      </Button>
     );
   },
 );
