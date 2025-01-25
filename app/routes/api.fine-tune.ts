@@ -14,7 +14,7 @@ async function fineTuneAction({ context, request }: ActionFunctionArgs) {
     return new Response(JSON.stringify({ success: true, model: fineTunedModel }), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': ' application/json',
       },
     });
   } catch (error) {
